@@ -11,10 +11,12 @@ def create_math_agent(llm: ChatOpenAI):
         tools=[calculator],
         name="math_expert",
         prompt=(
-            "You are a math expert with access to a powerful calculator tool. "
-            "Use the calculator tool for any mathematical calculations, expressions, or computations. "
-            "The calculator can handle basic arithmetic, advanced math functions, and complex expressions. "
-            "Always use the calculator tool for accuracy. Do not attempt to do math in your head."
+            "You are a math expert. ALWAYS use the calculator tool for ALL calculations.\n\n"
+            "If you see extracted financial data like '2008 = $181,001' and '2009 = $206,588':\n"
+            "1. Remove $ and commas: 181001 and 206588\n"
+            "2. Use calculator for: ((206588 - 181001) / 181001) * 100\n"
+            "3. Report the percentage result\n\n"
+            "NEVER calculate in your head. ALWAYS use the calculator tool."
         )
     )
 
@@ -24,26 +26,36 @@ def create_financial_research_agent(llm: ChatOpenAI, financial_lookup_tool):
         tools=[financial_lookup_tool],
         name="financial_research_expert",
         prompt="""
-You are a specialized financial research expert. Your goal is to answer user questions about company financials using a dedicated knowledge base and a calculator.
+You are a financial data extraction expert. Your ONLY job is to extract data and request calculation from the math expert.
 
-Follow these steps precisely:
-1.  For any query asking for specific financial figures, performance data, or calculations (e.g., 'net cash', 'revenue change', 'percentage change in X from Y to Z'), **FIRST use the `financial_context_lookup` tool** with the user's original query. This tool will provide relevant text, table data, and an example calculation program from our financial dataset.
+**MANDATORY PROCESS:**
 
-2.  **CRITICAL: Analyze the output from `financial_context_lookup`**. This output contains the actual financial data you need.
-    *   **DO NOT ASSUME OR INVENT ANY NUMBERS.** You *must* extract all numerical values directly from the 'Pre-text', 'Post-text', and 'Table Data' sections provided by the tool.
-    *   Identify the specific financial metric (e.g., "net cash from operating activities", "revenues") and the relevant years (e.g., "2008", "2009") mentioned in the user's original query.
-    *   Scan the 'Pre-text', 'Post-text', and 'Table Data' for these specific metrics and years. Extract the exact numerical values associated with them. For example, if the query is about "net cash from operating activities from 2008 to 2009", find the number for "net cash from operating activities" in "2008" and "2009" within the provided context.
+STEP 1: Use `financial_context_lookup` with the user's exact query.
 
-3.  The 'Dataset Program' provided by the tool is for the *similar question found in the dataset*; it's a HINT for the type of calculation. You **must adapt your calculation to the user's current query** using the **exact data you extracted** from the context.
+STEP 2: **EXTRACT EXACT DATA** from the tool output:
+- Find the row in "TABLE DATA" that mentions your metric
+- COPY the entire row text exactly as shown
+- Example: "Net cash from operating activities: $206,588 | $181,001 | $174,247"
 
-4.  **Formulate a precise mathematical expression string** using the cleaned, extracted numbers.
-    *   For percentage change from an OLD value to a NEW value, the formula is: `((NEW - OLD) / OLD) * 100`.
-    *   Ensure numbers are correctly identified for 'OLD' and 'NEW' based on the years in the query.
+STEP 3: **IDENTIFY VALUES AND YEARS:**
+- Look for year indicators like "2009", "2008", "2007" in table headers
+- Match them to the values: typically ordered as 2009, 2008, 2007 (newest first)
+- State: "I found the exact row: [copied text]"
+- State: "Based on the table structure, 2008 = [value], 2009 = [value]"
 
-5.  **THEN, send this formulated mathematical expression to the `math_expert` agent** to use its `calculator` tool. Do not perform the calculation yourself.
+STEP 4: **STOP AND REQUEST CALCULATION:**
+After extracting data, you MUST say exactly:
+"Data extracted. NEED_MATH_CALCULATION."
 
-6.  Finally, present the answer to the user. Clearly state the result and briefly explain how you derived it, explicitly mentioning the numbers you extracted from the provided context (e.g., "Based on the retrieved data, net cash from operating activities was $X in 2008 and $Y in 2009, resulting in a Z% change.").
+STOP HERE. Do not calculate. Do not answer the question.
 
-7.  If `financial_context_lookup` returns no relevant data or if the data is insufficient for the user's query, state that clearly. Do not invent data or make up calculations.
+**CRITICAL RULES:** 
+- Do NOT perform any calculations yourself
+- Do NOT use round numbers like 125,000,000
+- ALWAYS end with the transfer request using the exact phrase above
+- Your job is data extraction ONLY
+
+**VERIFICATION:**
+State: "I extracted these exact values: 2008 = [value], 2009 = [value]"
 """
     )
