@@ -1,6 +1,8 @@
-# FinQAChat: Conversational Financial Document Analysis Agent
+# FinQAChat: Local Financial Document Analysis Agent
 
-A sophisticated LLM-powered agent system for answering conversational questions about financial documents. This implementation goes beyond simple RAG to provide accurate financial calculations with step-by-step reasoning.
+A sophisticated multi-agent system powered by **locally-running qwen3-4b-mlx** for answering conversational questions about financial documents. This implementation goes beyond simple RAG to provide accurate financial calculations with step-by-step reasoning, running entirely on your local machine for privacy and control.
+
+**Developed and tested on MacBook Air M3 with 8GB RAM** - demonstrating that powerful financial AI can run on consumer hardware.
 
 [![CI/CD Pipeline](https://github.com/morriswong/FinQAChat/actions/workflows/ci.yml/badge.svg)](https://github.com/morriswong/FinQAChat/actions/workflows/ci.yml)
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
