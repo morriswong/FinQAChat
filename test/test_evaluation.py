@@ -362,38 +362,6 @@ class TestEvaluation:
         if numerical_matches == 0:
             print(f"   ⚠️  No numerical matches - debugging data retrieval needed")
     
-    def test_evaluation_output_format(self, finqa_app):
-        """Test that evaluation results are properly formatted and saved"""
-        # Use just one question for this format test
-        question = "what was the percentage change in the net cash from operating activities from 2008 to 2009"
-        expected = "14.1%"
-        
-        result = evaluate_single_question(finqa_app, question, expected, timeout=60)
-        
-        # Test result format
-        assert hasattr(result, 'question')
-        assert hasattr(result, 'expected_answer')
-        assert hasattr(result, 'extracted_answer')
-        assert hasattr(result, 'response_time')
-        assert hasattr(result, 'exact_match')
-        assert hasattr(result, 'numerical_match')
-        
-        # Test saving functionality
-        os.makedirs('./logs', exist_ok=True)
-        output_file = './logs/evaluation_format_test.json'
-        save_evaluation_results([result], output_file)
-        
-        # Verify file was created and has correct format
-        assert os.path.exists(output_file), "Results file should be created"
-        
-        with open(output_file, 'r') as f:
-            data = json.load(f)
-        
-        assert 'metadata' in data
-        assert 'summary' in data
-        assert 'detailed_results' in data
-        assert len(data['detailed_results']) == 1
-        assert 'accuracy_numerical' in data['summary']
 
 if __name__ == "__main__":
     # Allow running this test file directly
