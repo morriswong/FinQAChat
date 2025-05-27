@@ -106,27 +106,63 @@ def create_financial_context_lookup_tool(rag_system_instance: FinancialRAGSystem
                 table_str = "\n"
                 for i, row in enumerate(context['table_data']): # Print all rows for debugging
                     table_str += f"    Row {i+1}: {row}\n"
+                    
+                # Extract key numerical data for validation
+                print(f"🔍 DATA VALIDATION - Key numbers found in table:")
+                for i, row in enumerate(context['table_data']):
+                    if len(row) >= 3 and any(char.isdigit() for char in str(row[0])):
+                        print(f"     {row[0]}: {row[1:] if len(row) > 1 else 'No values'}")
             else:
                 print("  ⚠️  No table data found in context")
 
             print(f"  Post-text (first 300 chars): {context['post_text'][:300]}...")
 
-            # Original response format (as per user's request to keep code unchanged)
+            # Improve table formatting for clearer data extraction
+            formatted_table = "No table data available."
+            if context['table_data']:
+                formatted_table = "\n"
+                for i, row in enumerate(context['table_data']):
+                    # Format each row clearly
+                    if len(row) > 1:
+                        row_label = str(row[0]) if row[0] else f"Row {i+1}"
+                        row_values = [str(cell) for cell in row[1:] if cell]
+                        if row_values:
+                            formatted_table += f"  • {row_label}: {' | '.join(row_values)}\n"
+                    else:
+                        formatted_table += f"  • {' | '.join(str(cell) for cell in row if cell)}\n"
+
+            # Add explicit year mapping for clarity
+            year_headers = ""
+            if context['table_data'] and len(context['table_data']) > 0:
+                # Try to find year information from headers
+                header_row = context['table_data'][0] if context['table_data'] else []
+                if any('2009' in str(cell) or '2008' in str(cell) or '2007' in str(cell) for cell in header_row):
+                    year_headers = f"\nYEAR MAPPING FROM TABLE HEADERS: {header_row}"
+
             response = f"""
-                SIMILAR QUESTION FOUND (Similarity: {similarity_score:.2%}):
-                Dataset Question: {context['question']}
-                Dataset Answer: {context['answer']}
-                Dataset Program: {context['program']}
+⚠️  CRITICAL DATA EXTRACTION TASK ⚠️
 
-                CONTEXT FROM: {context['filename']}
-                Pre-text: {context['pre_text']}
-                Table Data:
-                {table_str}
-                Post-text: {context['post_text']}
+REFERENCE ANSWER: {context['answer']} (from dataset)
+REFERENCE CALCULATION: {context['program']} (from dataset)
 
-                Use this context to answer the user's original query: '{query}'.
-                Extract necessary numbers and use the calculator for calculations.
-            """
+🔍 EXACT TABLE DATA TO EXTRACT FROM:
+{formatted_table}{year_headers}
+
+🚨 EXTRACTION RULES:
+1. Find the row containing your target metric
+2. Copy the EXACT text from that row (with $ signs and commas)
+3. DO NOT invent, round, or estimate any numbers
+4. The table shows values in columns - typically ordered by year
+5. If you use numbers like 125,000,000 or 1,250,000 you are WRONG
+
+📝 SUPPORTING CONTEXT:
+Pre-text: {context['pre_text']}
+Post-text: {context['post_text']}
+
+USER QUERY: '{query}'
+
+⚠️  BEFORE YOU ANSWER: Copy the exact row from the table that contains your metric and state which column corresponds to which year.
+"""
             return response.strip()
             
         except Exception as e:
