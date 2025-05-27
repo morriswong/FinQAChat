@@ -72,6 +72,15 @@ Supervisor Agent (Router)
 - UUID-based session isolation
 - Streaming response support for real-time interaction
 
+### 5. Modularity and Extensibility
+
+FinQAChat is designed with a strong emphasis on modularity to facilitate future enhancements and component interchangeability. This architectural choice allows for:
+- **Swappable LLM Models**: The system's design abstracts the underlying LLM, enabling seamless integration of different models (e.g., GPT-4o, Claude, Gemini, or other local models) by adhering to a consistent interface. This supports experimentation and optimization of LLM performance without extensive code changes.
+- **Interchangeable Retrieval Strategies**: The retrieval mechanism is decoupled from the core agent logic. This means alternative retrieval strategies (e.g., embedding-based semantic search, keyword matching, or hybrid approaches) can be implemented and swapped in to improve context relevance and accuracy.
+- **Flexible Dataset Integration**: The system is built to accommodate various underlying datasets. By abstracting data loading and access, new financial datasets or different data formats can be integrated with minimal disruption to the existing architecture, supporting continuous improvement of the system's knowledge base.
+
+This modular approach ensures that FinQAChat remains adaptable, allowing for independent development, testing, and deployment of individual components, which is critical for a production-quality agent.
+
 ## Implementation Details
 
 ### Core Components
