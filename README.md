@@ -22,7 +22,7 @@ For a more detailed explanation of the architecture and design decisions, refer 
 
 ### High-Level Design
 
-![Agent Flowchart](https://github.com/morriswong/FinQAChat/blob/main/agent_flowchat.png?raw=true)
+<img src="https://github.com/morriswong/FinQAChat/blob/main/agent_flowchat.png?raw=true" alt="Agent Flowchart" width="600">
 
 **Key Workflow Features:**
 - **Linear Flow**: User query → Financial Research → Math Expert → Response
