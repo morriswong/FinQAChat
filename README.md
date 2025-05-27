@@ -67,7 +67,7 @@ For a more detailed explanation of the architecture and design decisions, refer 
 
 1. **Clone the repository**
    ```bash
-   git clone <repository-url>
+   git clone git@github.com:morriswong/FinQAChat.git
    cd FinQAChat
    ```
 
