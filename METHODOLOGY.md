@@ -28,6 +28,7 @@ Supervisor Agent (Router)
 ```
 
 **Key Benefits**:
+- **Why Supervisor Design?**: The supervisor-agent pattern was chosen for its ability to enforce a clear separation of concerns between financial research and mathematical computation. This allows for specialized prompts tailored to each agent's specific task, leading to optimized performance. Furthermore, it provides robust error isolation, preventing mathematical errors from corrupting document analysis, and ensures transparent reasoning with a clear chain of thought from data to result.
 - **Separation of Concerns**: Financial research vs. mathematical computation
 - **Specialized Prompts**: Each agent optimized for its specific task
 - **Error Isolation**: Mathematical errors don't corrupt document analysis
@@ -65,6 +66,7 @@ Supervisor Agent (Router)
 ### 4. Memory Management
 
 **Conversation Context**:
+- **Why LangGraph?**: LangGraph was chosen for its robust checkpointer feature, which provides session-based memory. This is crucial for maintaining conversation history across multiple turns, enabling UUID-based session isolation, and supporting streaming responses for real-time interaction.
 - LangGraph checkpointer for session-based memory
 - Maintains conversation history across multiple turns
 - UUID-based session isolation
@@ -235,7 +237,7 @@ pytest test/test_evaluation.py::TestEvaluation::test_sample_evaluation_with_grou
 - More predictable and debuggable results
 - Lower latency for real-time responses
 
-**Trade-off**: May miss semantically similar but lexically different questions
+**Trade-off**: While offering predictability and lower latency, this approach may miss semantically similar but lexically different questions, which could limit the system's ability to generalize to diverse phrasing.
 
 ### 2. Multi-Agent vs. Single Agent
 
@@ -247,7 +249,7 @@ pytest test/test_evaluation.py::TestEvaluation::test_sample_evaluation_with_grou
 - Clearer separation of concerns
 - More maintainable and testable code
 
-**Trade-off**: Additional complexity in agent coordination
+**Trade-off**: While offering benefits like error isolation and specialized prompts, the multi-agent architecture introduces additional complexity in terms of agent coordination and overall system design.
 
 ### 3. Local vs. Cloud LLM
 
@@ -259,7 +261,7 @@ pytest test/test_evaluation.py::TestEvaluation::test_sample_evaluation_with_grou
 - Reduced latency for local inference
 - Independence from API rate limits
 
-**Trade-off**: Additional setup complexity for users
+**Trade-off**: While offering significant advantages in privacy, cost, and latency, local LLM deployment introduces additional setup complexity for users, requiring them to manage local environments and model configurations.
 
 ## Limitations & Future Work
 
