@@ -1,0 +1,10 @@
+/.env
+venv/
+logs/
+*/__pycache__/*
+src/archive/agents_coding.py
+src/archive/agents_custom_model.py
+src/archive/agents_sdk_example.py
+src/archive/agents_weather.py
+src/archive/tool_use_example.py
+src/finqa_agent.py

@@ -1,0 +1,12 @@
+langchain-openai
+langgraph-supervisor
+langsmith
+litellm
+numpy==1.26.4
+openai
+openai-agents
+python-dotenv==1.0.1
+viz
+pytest>=7.0.0
+pytest-cov>=4.0.0
+pydantic>=2.0.0
