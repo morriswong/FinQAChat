@@ -74,4 +74,25 @@ def create_application_workflow(llm: ChatOpenAI, math_agent, financial_agent):
     
     # Compile with memory
     memory = MemorySaver()
-    return workflow.compile(checkpointer=memory)
+    compiled_workflow = workflow.compile(checkpointer=memory)
+    
+    # Add visualization method
+    def visualize_workflow():
+        """Generate and display the workflow diagram"""
+        try:
+            from IPython.display import Image, display
+            display(Image(compiled_workflow.get_graph().draw_mermaid_png()))
+        except ImportError:
+            print("IPython not available. Install with: pip install ipython")
+        except Exception as e:
+            print(f"Visualization error: {e}")
+            print("You can also get the mermaid diagram as text:")
+            try:
+                print(compiled_workflow.get_graph().draw_mermaid())
+            except Exception as e2:
+                print(f"Could not generate mermaid diagram: {e2}")
+    
+    # Attach the visualization method to the compiled workflow
+    compiled_workflow.visualize = visualize_workflow
+    
+    return compiled_workflow
